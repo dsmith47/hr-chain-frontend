@@ -13,11 +13,11 @@ export class HrApiService {
   constructor(private http: Http) {}
 
   public getTicketIds(): Observable<any> {
-    console.log(this.baseUrl);
-    const options = new RequestOptions({
-    headers: new Headers({
-      'APIKEY': this.apiKey
-    })
+    console.log(this.baseUrl)
+    let options = new RequestOptions({
+      headers: new Headers({
+        'APIKEY': this.apiKey
+      })
     });
     return this.http.get(this.baseUrl + this.getEmployeesEndpoint, options);
   }
