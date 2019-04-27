@@ -1,3 +1,72 @@
+<!-- Adapted from: https://www.webucator.com/how-to/how-style-table-with-css.cfm -->
+
+<div id="main">
+  <table class="timecard">
+    <caption>Employee Timecard</caption>
+    <thead>
+    <tr>
+      <th id="thDay">Day</th>
+      <th id="thRegular">Regular</th>
+      <th id="thOvertime">Overtime</th>
+      <th id="thTotal">Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr class="odd">
+      <th>Monday</th>
+      <td>8</td>
+      <td>0</td>
+      <td>8</td>
+    </tr>
+    <tr class="even">
+      <th>Tuesday</th>
+      <td>8</td>
+      <td>2.5</td>
+      <td>10.5</td>
+    </tr>
+    <tr class="odd">
+      <th>Wednesday</th>
+      <td>8</td>
+      <td>0</td>
+      <td>8</td>
+    </tr>
+    <tr class="even">
+      <th>Thursday</th>
+      <td>8</td>
+      <td>0</td>
+      <td>8</td>
+    </tr>
+    <tr class="odd">
+      <th>Friday</th>
+      <td>8</td>
+      <td>0</td>
+      <td>8</td>
+    </tr>
+    <tr class="even">
+      <th>Saturday</th>
+      <td>0</td>
+      <td>5</td>
+      <td>5</td>
+    </tr>
+    <tr class="odd">
+      <th>Sunday</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+      <th>Total weekly hours:</th>
+      <td>40</td>
+      <td>8.5</td>
+      <td>48.5</td>
+    </tr>
+    </tfoot>
+  </table>
+</div>
+
+<!--
 <h3> Employee Details: </h3>
 <div>
   <span>Name: {{empName}}</span> 
@@ -46,3 +115,4 @@
 <button (click)="getAllTickets()">
   Submit Project Update
 </button>
+-->
