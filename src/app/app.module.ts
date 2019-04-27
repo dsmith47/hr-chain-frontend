@@ -7,11 +7,13 @@ import { HrApiService } from './hr-api.service';
 
 import { AppComponent } from './app.component';
 import { EmployeeInterfaceComponent } from './employee-interface/employee-interface.component';
+import { TimeCardViewComponent } from './time-card-view/time-card-view.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    EmployeeInterfaceComponent
+    EmployeeInterfaceComponent,
+    TimeCardViewComponent
   ],
   imports: [
     BrowserModule,

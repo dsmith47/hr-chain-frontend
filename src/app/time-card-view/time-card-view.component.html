@@ -1,0 +1,48 @@
+<h3> Employee Details: </h3>
+<div>
+  <span>Name: {{empName}}</span> 
+</div>
+<div>
+  <span>Asset: {{empId}}</span> 
+</div>
+<div>
+  <span>Public Key: {{empKey}}</span> 
+</div>
+<div>
+  <span>Supervisor: {{supKey}}</span> 
+</div>
+
+<h3> Time Card Submission: </h3>
+
+<div>
+  <span>Asset Id:</span>
+  <input type="" class="" id="" [(ngModel)]="assetId" name="assetId">
+</div>
+
+<div>
+  <span>Public Key:</span>
+  <input type="" class="" id="" [(ngModel)]="pubKey" name="assetId">
+</div>
+
+<div>
+  <span>Date:</span>
+  <input type="" class="" id="" [(ngModel)]="date" name="assetId">
+</div>
+
+<div>
+  <span>Project:</span>
+  <input type="" class="" id="" [(ngModel)]="project" name="assetId">
+</div>
+
+<div>
+  <span>Minutes Worked:</span>
+  <input type="" class="" id="" [(ngModel)]="minutes_worked" name="assetId">
+</div>
+
+<div>
+  {{lastRequestStatus}}
+</div>
+
+<button (click)="getAllTickets()">
+  Submit Project Update
+</button>
