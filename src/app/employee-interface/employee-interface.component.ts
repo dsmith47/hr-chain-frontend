@@ -9,18 +9,18 @@ import { HrApiService } from '../hr-api.service';
 })
 export class EmployeeInterfaceComponent implements OnInit {
 
-  empName = '';
-  empId = '';
-  empKey = '';
-  supKey = '';
+  empName:string = "";
+  empId:string = "";
+  empKey:string = "";
+  supKey:string = "";
 
-  assetId = '';
-  pubKey = '';
-  date = '';
-  project = '';
-  minutes_worked = '';
+  assetId:string = "";
+  pubKey:string ="";
+  date:string ="";
+  project:string ="";
+  minutes_worked:string ="";
 
-  lastRequestStatus = '';
+  lastRequestStatus:string = "";
 
   constructor(private api: HrApiService) { }
 
@@ -33,7 +33,7 @@ export class EmployeeInterfaceComponent implements OnInit {
                                this.project, this.minutes_worked)
       .subscribe((data) => {
         console.log(data);
-        this.lastRequestStatus = 'submission Logged!';
+        this.lastRequestStatus = "submission Logged!"
         this.getEmployeeInformation();
       });
   }
@@ -41,12 +41,12 @@ export class EmployeeInterfaceComponent implements OnInit {
   getEmployeeInformation() {
     this.api.getEmployee('0xcc3f10Dc50eDBc58Ec01Ea8783E1945EF5b6Dc55')
     .subscribe(((data) => {
-      const d = JSON.parse(data._body).results[0].payload.inputs;
-
-     this.empName = d['name'];
-     this.empId = d['assetId'];
-     this.empKey = d['public_key'];
-     this.supKey = d['supervisor'];
+      let d = JSON.parse(data._body).results[0].payload.inputs;
+      
+     this.empName = d["name"];
+     this.empId = d["assetId"];
+     this.empKey = d["public_key"];
+     this.supKey = d["supervisor"];
     }));
   }
 }
