@@ -1,0 +1,19 @@
+<div>
+<div>
+  Login
+</div>
+<div>
+  <label for="pubKey">Public Key:</label>
+  <input type="text" [(ngModel)]="pubKey" name="pubKey" />
+</div>
+<div>
+  <label for="privKey">Private Key:</label>
+  <input type="text" [(ngModel)]="privKey" name="privKey" />
+</div>
+
+<div>
+  {{error}}
+</div>
+
+<button (click)="submitAuth()">Login</button>
+</div>

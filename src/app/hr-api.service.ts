@@ -4,8 +4,8 @@ import { Observable } from "rxjs/Observable";
 
 @Injectable()
 export class HrApiService {
-  baseUrl: string = "https://api.simbachain.com/v1/HR_Chain_API"; 
-  apiKey: string = "6de93c447d58ef885506901e46ff4b7eed978f7eefe9cc9ab4dd6329ea0a7f41";
+  baseUrl: string = "https://api.simbachain.com/v1/HR_Chain_V3"; 
+  apiKey: string = "e50c20bc126c1226d98a6026044109417b11351f7efba17d109d6015870917a3";
 
   getEmployeesEndpoint = "/employee_create/";
   modifyProjectTimeEndpoint = "/time_card_modify_time/";
@@ -15,12 +15,13 @@ export class HrApiService {
   public getTicketIds(): Observable<any> {
     console.log(this.baseUrl)
     let options = new RequestOptions({
-    headers: new Headers({
-      'APIKEY': this.apiKey
-    })
+      headers: new Headers({
+        'APIKEY': this.apiKey
+      })
     });
     return this.http.get(this.baseUrl + this.getEmployeesEndpoint, options);
   }
+
 
   public getEmployee(pubKey:string): Observable<any> {
     let options = new RequestOptions({
