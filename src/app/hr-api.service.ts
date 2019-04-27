@@ -10,7 +10,19 @@ export class HrApiService {
   getEmployeesEndpoint = '/employee_create/';
   modifyProjectTimeEndpoint = '/time_card_modify_time/';
 
-  constructor(private http: Http) {}
+  // Later on we could make state variables observable if we want to update components in real time
+  // https://blog.angular-university.io/how-to-build-angular2-apps-using-rxjs-observable-data-services-pitfalls-to-avoid/
+  // Dict of pubKey:Name
+  private employees = {};
+
+  constructor(private http: Http) {
+    this.updateData();
+  }
+
+  updateData() {
+    console.log('Initializing API employee data');
+    this.updateEmployeesData();
+  }
 
   public getTicketIds(): Observable<any> {
     console.log(this.baseUrl)
@@ -57,13 +69,45 @@ export class HrApiService {
   public getEmployeeTimeCards(pubKey: string): Observable<any> {
     const options = new RequestOptions({
       headers: new Headers({
-        'APIKEY': this.apiKey,
-        'project_exact': 'hackathon',
+        'APIKEY': this.apiKey
       })
     });
 
     return this.http.get(this.baseUrl + this.modifyProjectTimeEndpoint,
       options);
   }
+
+
+  // ###########################################
+  // Methods to update data from the block chain
+  // ###########################################
+  public updateEmployeesData() {
+    const options = new RequestOptions({
+        headers: new Headers({
+        'APIKEY': this.apiKey
+      })
+    })
+
+    this.http.get(this.baseUrl + this.getEmployeesEndpoint, options).subscribe((data) => {
+      console.log('Updating employee list');
+
+      const d = JSON.parse(data['_body']);
+      const results = d.results;
+      console.log(results);
+      for (let i = 0; i < d['count']; i++) {
+        const result = results[i].payload.inputs;
+        this.employees[result.public_key] = result.name;
+      }
+
+      console.log('Done updating employee list');
+    });
+    }
+
+  // ###########################################
+  // Accessor methods
+  // ###########################################
+  public getEmployees() {
+    return this.employees;
+  };
 
 }

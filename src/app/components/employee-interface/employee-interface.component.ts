@@ -25,6 +25,7 @@ export class EmployeeInterfaceComponent implements OnInit {
 
   ngOnInit() {
     this.getEmployeeInformation();
+    console.log(this.api);
   }
 
   getAllTickets() {

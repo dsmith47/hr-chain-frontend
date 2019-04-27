@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { HrApiService } from '../hr-api.service';
+import { HrApiService } from '../../hr-api.service';
 
 @Component({
   selector: 'app-time-card-view',
@@ -63,4 +63,5 @@ export class TimeCardViewComponent implements OnInit {
         this.employeeTimeCards = d.results;
       });
   }
+
 }
