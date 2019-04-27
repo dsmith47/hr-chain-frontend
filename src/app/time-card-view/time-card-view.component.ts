@@ -22,15 +22,17 @@ export class TimeCardViewComponent implements OnInit {
 
   lastRequestStatus = '';
 
+  employeeTimeCards = [];
+
   constructor(private api: HrApiService) { }
 
   ngOnInit() {
     this.getEmployeeInformation();
+    this.getEmployeeTimeCards();
   }
 
   getAllTickets() {
-    this.api.modifyProjectTime(this.assetId, this.pubKey, this.date,
-                               this.project, this.minutes_worked)
+    this.api.modifyProjectTime(this.assetId, this.pubKey, this.date, this.minutes_worked)
       .subscribe((data) => {
         console.log(data);
         this.lastRequestStatus = 'submission Logged!';
@@ -48,5 +50,17 @@ export class TimeCardViewComponent implements OnInit {
      this.empKey = d['public_key'];
      this.supKey = d['supervisor'];
     }));
+  }
+
+  getEmployeeTimeCards() {
+    this.api.getEmployeeTimeCards('0xcc3f10Dc50eDBc58Ec01Ea8783E1945EF5b6Dc55')
+      .subscribe((data) => {
+        console.log(data);
+
+        const d = JSON.parse(data._body);
+        console.log(d);
+
+        this.employeeTimeCards = d.results;
+      });
   }
 }

@@ -17,7 +17,6 @@ export class EmployeeInterfaceComponent implements OnInit {
   assetId = '';
   pubKey = '';
   date = '';
-  project = '';
   minutes_worked = '';
 
   lastRequestStatus = '';
@@ -29,8 +28,7 @@ export class EmployeeInterfaceComponent implements OnInit {
   }
 
   getAllTickets() {
-    this.api.modifyProjectTime(this.assetId, this.pubKey, this.date,
-                               this.project, this.minutes_worked)
+    this.api.modifyProjectTime(this.assetId, this.pubKey, this.date, this.minutes_worked)
       .subscribe((data) => {
         console.log(data);
         this.lastRequestStatus = 'submission Logged!';
