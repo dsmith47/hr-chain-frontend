@@ -91,23 +91,31 @@ export class HrApiService {
       })
     });
 
-    // Find all time card creations
+    // Read ALL transactions on the blockchain to determine the current state
     this.http.get(this.baseUrl + this.transactionsEndpoint, options).subscribe((data) => {
       this.employees = {};
 
       const d = JSON.parse(data['_body']);
       const results = d.results;
       console.log(results);
+
+      // Note that this processes transactions from oldest to newest
       for ( let i = d['count'] - 1; i >= 0; i--) {
         const result = results[i];
         const method = result.payload.method;
 
         switch (method) {
           case 'employee_create':
-            this.processCreateEmployee(result);
+            this.processEmployeeCreate(result);
             break;
           case 'employee_remove':
-            // TODO
+            this.processEmployeeRemove(result);
+            break;
+          case 'employee_set_supervisor':
+            this.processEmployeeSetSupervisor(result);
+            break;
+          case 'time_card_approve':
+            this.processTimeCardApprove(result);
             break;
           case 'time_card_create':
             this.processCreateTimeCard(result);
@@ -115,14 +123,11 @@ export class HrApiService {
           case 'time_card_modify_time':
             this.processModifyTimeCard(result);
             break;
-          case 'time_card_submit_for_approval':
-            // TODO
-            break;
-          case 'time_card_approve':
-            // TODO
-            break;
           case 'time_card_reject':
-            // TODO
+            this.processTimeCardReject(result);
+            break;
+          case 'time_card_submit_for_approval':
+            this.processTimeCardSubmitForApproval(result);
             break;
           default:
             break;
@@ -131,7 +136,8 @@ export class HrApiService {
     });
   };
 
-  private processCreateEmployee(result) {
+  // Create a new employee object and add it to this.employees
+  private processEmployeeCreate(result) {
     const inputs = result.payload.inputs;
 
     const employee = new Employee();
@@ -144,6 +150,57 @@ export class HrApiService {
     this.employees[inputs.public_key] = employee;
   }
 
+  // Delete the employee from this.employees
+  private processEmployeeRemove(result) {
+    const inputs = result.payload.inputs;
+
+    if (inputs.employee in this.employees) {
+      delete this.employees[inputs.employee];
+    } else {
+      console.log('Tried to delete non-existent employee');
+      console.log(result);
+    }
+  }
+
+  // Sets the employee supervisor
+  private processEmployeeSetSupervisor(result) {
+    const inputs = result.payload.inputs;
+
+    if (inputs.employee in this.employees) {
+      this.employees[inputs.employee].supervisorPubKey = inputs.supervisor;
+    } else {
+      console.log('Tried to set supervisor for non-existent employee');
+      console.log(result);
+    }
+  }
+
+  // Set the status of the time card to APPROVED iff it had been submitted for approval
+  private processTimeCardApprove(result) {
+    const inputs = result.payload.inputs;
+
+    if (!(inputs.employee in this.employees)) {
+      console.log('Tried to approve time card for non-existent employee');
+      console.log(result);
+      return;
+    }
+
+    const employee = this.employees[inputs.employee];
+    if (!(inputs.date in employee.time_cards)) {
+      console.log('Tried to approve non-existent time card');
+      console.log(result);
+      return;
+    }
+
+    const time_card = employee.time_cards[inputs.date];
+    if (time_card.status !== TimeCard.Status.SUBMITTED) {
+      console.log('Tried to approve time card that was not submitted for approval');
+      console.log(result);
+      return;
+    }
+
+    this.employees[inputs.employee].time_cards[inputs.date].status = TimeCard.Status.APPROVED;
+  }
+
   private processCreateTimeCard(result) {
     const inputs = result.payload.inputs;
 
@@ -151,7 +208,7 @@ export class HrApiService {
     time_card.creation_timestamp = result.timestamp;
     time_card.empKey = inputs.employee;
     time_card.date = inputs.date;
-    time_card.status = 'in progress';
+    time_card.status = TimeCard.Status.IN_PROGRESS;
 
     if (inputs.employee in this.employees) {
       this.employees[inputs.employee].time_cards[inputs.date] = time_card;
@@ -169,14 +226,69 @@ export class HrApiService {
       return;
     }
 
-    if (!(inputs.date in this.employees[inputs.employee])) {
+    const employee = this.employees[inputs.employee];
+    if (!(inputs.date in employee.time_cards)) {
       // Needs to be created by a time_card_create
       console.log('Read time_card_modify for non-existent time card.');
       return;
     }
 
-    // Could put a timestamp check here, but I assume we process from oldest to newest
     this.employees[inputs.employee].time_cards[inputs.date].minutes_worked = inputs.minutes_worked;
+    this.employees[inputs.employee].time_cards[inputs.date].status = TimeCard.Status.IN_PROGRESS;
+  }
+
+  // Set the status of the time card to REJECTED iff it had been submitted for approval
+  // This code is mostly duplicated from processTimeCardApprove, I could've made them share code but oh well
+  private processTimeCardReject(result) {
+    const inputs = result.payload.inputs;
+
+    if (!(inputs.employee in this.employees)) {
+      console.log('Tried to approve time card for non-existent employee');
+      console.log(result);
+      return;
+    }
+
+    const employee = this.employees[inputs.employee];
+    if (!(inputs.date in employee.time_cards)) {
+      console.log('Tried to approve non-existent time card');
+      console.log(result);
+      return;
+    }
+
+    const time_card = employee.time_cards[inputs.date];
+    if (time_card.status !== TimeCard.Status.SUBMITTED) {
+      console.log('Tried to approve time card that was not submitted for approval');
+      console.log(result);
+      return;
+    }
+
+    this.employees[inputs.employee].time_cards[inputs.date].status = TimeCard.Status.REJECTED;
+  }
+
+  private processTimeCardSubmitForApproval(result) {
+    const inputs = result.payload.inputs;
+
+    if (!(inputs.employee in this.employees)) {
+      console.log('Tried to approve time card for non-existent employee');
+      console.log(result);
+      return;
+    }
+
+    const employee = this.employees[inputs.employee];
+    if (!(inputs.date in employee.time_cards)) {
+      console.log('Tried to approve non-existent time card');
+      console.log(result);
+      return;
+    }
+
+    const time_card = employee.time_cards[inputs.date];
+    if (time_card.status !== TimeCard.Status.IN_PROGRESS) {
+      console.log('Tried to approve time card that was not submitted for approval');
+      console.log(result);
+      return;
+    }
+
+    this.employees[inputs.employee].time_cards[inputs.date].status = TimeCard.Status.REJECTED;
   }
 
   // ###########################################
