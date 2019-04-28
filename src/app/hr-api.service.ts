@@ -103,7 +103,6 @@ export class HrApiService {
   }
 
 
-
   // ###########################################
   // Methods to update data from the block chain
   // ###########################################
