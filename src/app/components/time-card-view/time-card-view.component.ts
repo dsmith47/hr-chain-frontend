@@ -20,29 +20,38 @@ export class TimeCardViewComponent implements OnInit {
   minutes_worked = '';
 
   lastRequestStatus = '';
-  timeCards = {};
 
   constructor(private api: HrApiService) { }
 
   ngOnInit() {
     this.getEmployeeInformation();
-    console.log(this.api.getEmployees());
   }
 
-  updateTimeCard() {
-    this.timeCards = this.api.getTimeCardsForEmployee(this.empKey);
+  getTimeCards() {
+    const time_cards = [];
+
+    const time_cards_dict = this.api.getTimeCardsForEmployee(this.empKey);
+
+    for (const date in time_cards_dict) {
+      const time_card = time_cards_dict[date];
+      const row = [time_card.date, time_card.minutes_worked, time_card.status];
+      time_cards.push(row);
+    }
+
+    console.log(time_cards);
+    return time_cards;
   }
 
   getEmployeeInformation() {
     this.api.getEmployee('0xcc3f10Dc50eDBc58Ec01Ea8783E1945EF5b6Dc55')
-    .subscribe(((data) => {
+    .subscribe((data) => {
       const d = JSON.parse(data._body).results[0].payload.inputs;
 
      this.empName = d['name'];
      this.empId = d['assetId'];
      this.empKey = d['public_key'];
      this.supKey = d['supervisor'];
-    }));
+    });
   }
-
 }
+

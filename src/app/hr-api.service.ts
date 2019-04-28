@@ -18,7 +18,8 @@ export class HrApiService {
   // https://blog.angular-university.io/how-to-build-angular2-apps-using-rxjs-observable-data-services-pitfalls-to-avoid/
 
   // {pubKey:Employee}
-  private employees = {};
+  public employees = {};
+  private _lastReadResultId = null; // TODO: Planning to use local storage so this is useful
 
   constructor(private http: Http) {
     this.updateData();
@@ -80,10 +81,21 @@ export class HrApiService {
       options);
   }
 
-
   // ###########################################
   // Methods to update data from the block chain
   // ###########################################
+
+  public getTransactions(): Observable<any> {
+    const options = new RequestOptions({
+      headers: new Headers({
+        'APIKEY': this.apiKey
+      })
+    });
+
+    // Read ALL transactions on the blockchain to determine the current state
+    return this.http.get(this.baseUrl + this.transactionsEndpoint, options);
+  }
+
   public updateState() {
     const options = new RequestOptions({
       headers: new Headers({
@@ -93,48 +105,75 @@ export class HrApiService {
 
     // Read ALL transactions on the blockchain to determine the current state
     this.http.get(this.baseUrl + this.transactionsEndpoint, options).subscribe((data) => {
-      this.employees = {};
-
-      const d = JSON.parse(data['_body']);
-      const results = d.results;
-      console.log(results);
-
-      // Note that this processes transactions from oldest to newest
-      for ( let i = d['count'] - 1; i >= 0; i--) {
-        const result = results[i];
-        const method = result.payload.method;
-
-        switch (method) {
-          case 'employee_create':
-            this.processEmployeeCreate(result);
-            break;
-          case 'employee_remove':
-            this.processEmployeeRemove(result);
-            break;
-          case 'employee_set_supervisor':
-            this.processEmployeeSetSupervisor(result);
-            break;
-          case 'time_card_approve':
-            this.processTimeCardApprove(result);
-            break;
-          case 'time_card_create':
-            this.processCreateTimeCard(result);
-            break;
-          case 'time_card_modify_time':
-            this.processModifyTimeCard(result);
-            break;
-          case 'time_card_reject':
-            this.processTimeCardReject(result);
-            break;
-          case 'time_card_submit_for_approval':
-            this.processTimeCardSubmitForApproval(result);
-            break;
-          default:
-            break;
-        }
-      }
+      this.processData(data);
     });
   };
+
+  // Processes the entirety of the blockchain
+  public processData(data) {
+    this.employees = {};
+
+    const d = JSON.parse(data['_body']);
+    const results = d.results;
+    console.log(results);
+
+    // So that we don't need to re-process the whole blockchain each time
+    // TODO: Planning to use local storage so that this is useful
+    let reached_last_read_transaction = false;
+    if (this._lastReadResultId === null) {
+      reached_last_read_transaction = true;
+    }
+
+    // Note that this processes transactions from oldest to newest
+    for ( let i = d['count'] - 1; i >= 0; i--) {
+      const result = results[i];
+      const method = result.payload.method;
+
+      // TODO: Planning to use local storage so this is useful
+      // Check if we have already processed this data
+      if (reached_last_read_transaction) {
+        this._lastReadResultId = result.id;
+      } else {
+        if (result.id === this._lastReadResultId) {
+          reached_last_read_transaction = true;
+        }
+        console.log('Already read this transaction, skipping.');
+        continue;
+      }
+      this._lastReadResultId = result.id;
+
+      switch (method) {
+        case 'employee_create':
+          this.processEmployeeCreate(result);
+          break;
+        case 'employee_remove':
+          this.processEmployeeRemove(result);
+          break;
+        case 'employee_set_supervisor':
+          this.processEmployeeSetSupervisor(result);
+          break;
+        case 'time_card_approve':
+          this.processTimeCardApprove(result);
+          break;
+        case 'time_card_create':
+          this.processCreateTimeCard(result);
+          break;
+        case 'time_card_modify_time':
+          this.processModifyTimeCard(result);
+          break;
+        case 'time_card_reject':
+          this.processTimeCardReject(result);
+          break;
+        case 'time_card_submit_for_approval':
+          this.processTimeCardSubmitForApproval(result);
+          break;
+        default:
+          break;
+      }
+    }
+
+    return this.employees;
+  }
 
   // Create a new employee object and add it to this.employees
   private processEmployeeCreate(result) {
@@ -209,6 +248,7 @@ export class HrApiService {
     time_card.empKey = inputs.employee;
     time_card.date = inputs.date;
     time_card.status = TimeCard.Status.IN_PROGRESS;
+    time_card.minutes_worked = 0;
 
     if (inputs.employee in this.employees) {
       this.employees[inputs.employee].time_cards[inputs.date] = time_card;
@@ -288,7 +328,7 @@ export class HrApiService {
       return;
     }
 
-    this.employees[inputs.employee].time_cards[inputs.date].status = TimeCard.Status.REJECTED;
+    this.employees[inputs.employee].time_cards[inputs.date].status = TimeCard.Status.SUBMITTED;
   }
 
   // ###########################################
@@ -306,10 +346,23 @@ export class HrApiService {
   }
 
   public getTimeCardsForEmployeeOnDate(pubKey: string, date: string) {
-    if (!(pubKey in this.employees) && !(date in this.employees[pubKey])) {
-      return null;
+    console.log(this.employees);
+
+    if (this.employees === undefined) {
+      console.log('HrApiService.employees is undefined');
+      return new TimeCard();
+    };
+
+    if (!(pubKey in this.employees)) {
+      console.log('pubKey doesn\'t exist in HrApiService.employees');
+      return new TimeCard();
     }
+
+    if (!(date in this.employees[pubKey].time_cards)) {
+      console.log('time card for this date doesn\'t exist in HrApiService.employees');
+      return new TimeCard();
+    }
+
     return this.employees[pubKey].time_cards[date];
   }
-
 }
