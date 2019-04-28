@@ -87,24 +87,19 @@ export class HrApiService {
 
   public createTimecard(fromStr: string, dateStr: string, employeeStr: string): Observable<any> {
     const body = {
-      'assetId': '0',
-      'from': fromStr,
-      'date': dateStr,
-      'employee': employeeStr,
+      "assetId": "0",
+      "from": fromStr,
+      "date": dateStr,
+      "employee": employeeStr,
     };
 
     const options = new RequestOptions({
       headers: new Headers({
         'APIKEY': this.apiKey,
-	'apikey': this.apiKey,
-	'Content-Type': 'application/json'
       }),
-      body: body,
     }); 
 
-    //return this.http.post(this.baseUrl + this.createTimecardEndpoint, body, options);
-    //return this.http.get(this.baseUrl + this.createTimecardEndpoint, options);
-    return this.http.post(this.baseUrl + this.createTimecardEndpoint, options);
+    return this.http.post(this.baseUrl + this.createTimecardEndpoint, body, options);
   }
 
 
