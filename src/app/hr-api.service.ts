@@ -9,6 +9,8 @@ export class HrApiService {
 
   getEmployeesEndpoint = '/employee_create/';
   modifyProjectTimeEndpoint = '/time_card_modify_time/';
+  approveTimecardEndpoint = "/time_card_approve/";
+  rejectTimecardEndpoint = "/time_card_reject/";
 
   constructor(private http: Http) {}
 
@@ -66,4 +68,36 @@ export class HrApiService {
       options);
   }
 
+
+  public postApproveTimecard(assetId: string, date:string, employee: string, from: string) {
+    const options = new RequestOptions({
+      headers: new Headers({
+        'APIKEY': this.apiKey,
+      })
+    });
+    let body = {
+      "from": from,
+      "date": date,
+      "employee": employee,
+      "assetId": assetId,
+    };
+
+    return this.http.post(this.baseUrl + this.approveTimecardEndpoint, body, options)
+  }
+
+  public postRejectTimecard(assetId: string, date:string, employee: string, from: string) {
+    const options = new RequestOptions({
+      headers: new Headers({
+        'APIKEY': this.apiKey,
+      })
+    });
+    let body = {
+      "from": from,
+      "date": date,
+      "employee": employee,
+      "assetId": assetId,
+    };
+
+    return this.http.post(this.baseUrl + this.rejectTimecardEndpoint, body, options)
+  }
 }
