@@ -12,8 +12,12 @@ export class HrApiService {
 
   // Later on we could make state variables observable if we want to update components in real time
   // https://blog.angular-university.io/how-to-build-angular2-apps-using-rxjs-observable-data-services-pitfalls-to-avoid/
-  // Dict of pubKey:Name
+
+  // {pubKey:Name}
   private employees = {};
+
+  // {pubKey: {date: minutes_worked}}
+  private time_cards = {};
 
   constructor(private http: Http) {
     this.updateData();
@@ -22,11 +26,12 @@ export class HrApiService {
   updateData() {
     console.log('Initializing API employee data');
     this.updateEmployeesData();
+    this.updateTimeCardData();
   }
 
   public getTicketIds(): Observable<any> {
-    console.log(this.baseUrl)
-    let options = new RequestOptions({
+    console.log(this.baseUrl);
+    const options = new RequestOptions({
       headers: new Headers({
         'APIKEY': this.apiKey
       })
@@ -45,10 +50,8 @@ export class HrApiService {
                          options);
   }
 
-  public modifyProjectTime(assetId: string,
-                           pubKey: string,
-			   date: string,
-			   minutes_worked: string
+  public modifyProjectTime(assetId: string, pubKey: string,
+                           date: string, minutes_worked: string
   ): Observable<any> {
     console.log(this.baseUrl);
     const options = new RequestOptions({
@@ -86,14 +89,13 @@ export class HrApiService {
         headers: new Headers({
         'APIKEY': this.apiKey
       })
-    })
+    });
 
     this.http.get(this.baseUrl + this.getEmployeesEndpoint, options).subscribe((data) => {
       console.log('Updating employee list');
 
       const d = JSON.parse(data['_body']);
       const results = d.results;
-      console.log(results);
       for (let i = 0; i < d['count']; i++) {
         const result = results[i].payload.inputs;
         this.employees[result.public_key] = result.name;
@@ -101,7 +103,40 @@ export class HrApiService {
 
       console.log('Done updating employee list');
     });
-    }
+  }
+
+  public updateTimeCardData() {
+    const options = new RequestOptions({
+      headers: new Headers({
+        'APIKEY': this.apiKey
+      })
+    });
+
+    this.http.get(this.baseUrl + this.modifyProjectTimeEndpoint, options).subscribe((data) => {
+      console.log('Updating time card data');
+
+      const d = JSON.parse(data['_body']);
+      const results = d.results;
+      console.log(d);
+
+      // It's important that this reads from most recent to least recent
+      for (let i = 0; i < d['count']; i++) {
+        const result = results[i].payload.inputs;
+        if (!(result.employee in this.time_cards)){
+          this.time_cards[result.employee] = {};
+        }
+
+        if (!(result.date in this.time_cards[result.employee])) {
+          this.time_cards[result.employee][result.date] = result.minutes_worked;
+        }
+        else {
+          // We already have a more recent copy of this timecard, so do nothing.
+        }
+      }
+
+      console.log('Done updating time card data');
+    });
+  }
 
   // ###########################################
   // Accessor methods
@@ -109,5 +144,23 @@ export class HrApiService {
   public getEmployees() {
     return this.employees;
   };
+
+  public getAllTimeCards() {
+    return this.time_cards;
+  }
+
+  public getTimeCardForEmployee(pubKey: string) {
+    if (!(pubKey in this.time_cards)) {
+      return null;
+    }
+    return this.time_cards[pubKey];
+  }
+
+  public getTimeCardForEmployeeOnDate(pubKey: string, date: string) {
+    if (!(pubKey in this.time_cards) && !(date in this.time_cards[pubKey])) {
+      return null;
+    }
+    return this.time_cards;
+  }
 
 }
