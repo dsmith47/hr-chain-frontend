@@ -8,6 +8,7 @@ export class HrApiService {
   apiKey = 'e50c20bc126c1226d98a6026044109417b11351f7efba17d109d6015870917a3';
 
   getEmployeesEndpoint = '/employee_create/';
+  createTimecardEndpoint = '/time_card_create/';
   modifyProjectTimeEndpoint = '/time_card_modify_time/';
 
   // Later on we could make state variables observable if we want to update components in real time
@@ -34,7 +35,7 @@ export class HrApiService {
     const options = new RequestOptions({
       headers: new Headers({
         'APIKEY': this.apiKey
-      })
+      }),
     });
     return this.http.get(this.baseUrl + this.getEmployeesEndpoint, options);
   }
@@ -79,6 +80,30 @@ export class HrApiService {
     return this.http.get(this.baseUrl + this.modifyProjectTimeEndpoint,
       options);
   }
+
+  // ##########################################
+  // Methods to create object on the blockchain
+  // ##########################################
+
+  public createTimecard(fromStr: string, dateStr: string, employeeStr: string): Observable<any> {
+    const body = {
+      from: fromStr,
+      date: dateStr,
+      employee: employeeStr,
+    };
+
+    const options = new RequestOptions({
+      headers: new Headers({
+      'APIKEY': this.apiKey,
+      }),
+      body: body,
+    }); 
+
+    //return this.http.post(this.baseUrl + this.createTimecardEndpoint, body, options);
+    return this.http.post(this.baseUrl + this.createTimecardEndpoint, options);
+    //return this.http.get(this.baseUrl + this.createTimecardEndpoint, options);
+  }
+
 
 
   // ###########################################

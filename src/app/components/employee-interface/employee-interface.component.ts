@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { HrApiService } from '../../hr-api.service';
 
+import { Globals } from '../../global';
+
 @Component({
   selector: 'app-employee-interface',
   templateUrl: './employee-interface.component.html',
@@ -47,5 +49,11 @@ export class EmployeeInterfaceComponent implements OnInit {
      this.empKey = d['public_key'];
      this.supKey = d['supervisor'];
     }));
+  }
+
+  createTimecard() {
+    this.api.createTimecard(Globals.pubKey, "01/01/2019", "Dug").subscribe((data) => {
+      console.log(data);
+    });
   }
 }
