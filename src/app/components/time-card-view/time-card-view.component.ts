@@ -20,21 +20,17 @@ export class TimeCardViewComponent implements OnInit {
   minutes_worked = '';
 
   lastRequestStatus = '';
+  timeCards = {};
 
   constructor(private api: HrApiService) { }
 
   ngOnInit() {
     this.getEmployeeInformation();
-    console.log(this.api.getAllTimeCards());
+    console.log(this.api.getEmployees());
   }
 
-  getAllTickets() {
-    this.api.modifyProjectTime(this.assetId, this.pubKey, this.date, this.minutes_worked)
-      .subscribe((data) => {
-        console.log(data);
-        this.lastRequestStatus = 'submission Logged!';
-        this.getEmployeeInformation();
-      });
+  updateTimeCard() {
+    this.timeCards = this.api.getTimeCardsForEmployee(this.empKey);
   }
 
   getEmployeeInformation() {

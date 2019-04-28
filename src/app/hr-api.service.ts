@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http, RequestOptions, Headers, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { TimeCard } from './models/time_card.model';
+import { Employee } from './models/employee.model';
 
 @Injectable()
 export class HrApiService {
@@ -8,16 +10,15 @@ export class HrApiService {
   apiKey = 'e50c20bc126c1226d98a6026044109417b11351f7efba17d109d6015870917a3';
 
   getEmployeesEndpoint = '/employee_create/';
+  createTimecardEndpoint = '/time_card_create/';
   modifyProjectTimeEndpoint = '/time_card_modify_time/';
+  transactionsEndpoint = '/transaction';
 
   // Later on we could make state variables observable if we want to update components in real time
   // https://blog.angular-university.io/how-to-build-angular2-apps-using-rxjs-observable-data-services-pitfalls-to-avoid/
 
-  // {pubKey:Name}
+  // {pubKey:Employee}
   private employees = {};
-
-  // {pubKey: {date: minutes_worked}}
-  private time_cards = {};
 
   constructor(private http: Http) {
     this.updateData();
@@ -25,8 +26,7 @@ export class HrApiService {
 
   updateData() {
     console.log('Initializing API employee data');
-    this.updateEmployeesData();
-    this.updateTimeCardData();
+    this.updateState();
   }
 
   public getTicketIds(): Observable<any> {
@@ -84,58 +84,99 @@ export class HrApiService {
   // ###########################################
   // Methods to update data from the block chain
   // ###########################################
-  public updateEmployeesData() {
-    const options = new RequestOptions({
-        headers: new Headers({
-        'APIKEY': this.apiKey
-      })
-    });
-
-    this.http.get(this.baseUrl + this.getEmployeesEndpoint, options).subscribe((data) => {
-      console.log('Updating employee list');
-
-      const d = JSON.parse(data['_body']);
-      const results = d.results;
-      for (let i = 0; i < d['count']; i++) {
-        const result = results[i].payload.inputs;
-        this.employees[result.public_key] = result.name;
-      }
-
-      console.log('Done updating employee list');
-    });
-  }
-
-  public updateTimeCardData() {
+  public updateState() {
     const options = new RequestOptions({
       headers: new Headers({
         'APIKEY': this.apiKey
       })
     });
 
-    this.http.get(this.baseUrl + this.modifyProjectTimeEndpoint, options).subscribe((data) => {
-      console.log('Updating time card data');
+    // Find all time card creations
+    this.http.get(this.baseUrl + this.transactionsEndpoint, options).subscribe((data) => {
+      this.employees = {};
 
       const d = JSON.parse(data['_body']);
       const results = d.results;
-      console.log(d);
+      console.log(results);
+      for ( let i = d['count'] - 1; i >= 0; i--) {
+        const result = results[i];
+        const method = result.payload.method;
 
-      // It's important that this reads from most recent to least recent
-      for (let i = 0; i < d['count']; i++) {
-        const result = results[i].payload.inputs;
-        if (!(result.employee in this.time_cards)){
-          this.time_cards[result.employee] = {};
-        }
-
-        if (!(result.date in this.time_cards[result.employee])) {
-          this.time_cards[result.employee][result.date] = result.minutes_worked;
-        }
-        else {
-          // We already have a more recent copy of this timecard, so do nothing.
+        switch (method) {
+          case 'employee_create':
+            this.processCreateEmployee(result);
+            break;
+          case 'employee_remove':
+            // TODO
+            break;
+          case 'time_card_create':
+            this.processCreateTimeCard(result);
+            break;
+          case 'time_card_modify_time':
+            this.processModifyTimeCard(result);
+            break;
+          case 'time_card_submit_for_approval':
+            // TODO
+            break;
+          case 'time_card_approve':
+            // TODO
+            break;
+          case 'time_card_reject':
+            // TODO
+            break;
+          default:
+            break;
         }
       }
-
-      console.log('Done updating time card data');
     });
+  };
+
+  private processCreateEmployee(result) {
+    const inputs = result.payload.inputs;
+
+    const employee = new Employee();
+    employee.creation_timestamp = result.timestamp;
+    employee.pubKey = inputs.public_key
+    employee.name = inputs.name;
+    employee.supervisorPubKey = inputs.supervisor;
+    employee.time_cards = {};
+
+    this.employees[inputs.public_key] = employee;
+  }
+
+  private processCreateTimeCard(result) {
+    const inputs = result.payload.inputs;
+
+    const time_card = new TimeCard();
+    time_card.creation_timestamp = result.timestamp;
+    time_card.empKey = inputs.employee;
+    time_card.date = inputs.date;
+    time_card.status = 'in progress';
+
+    if (inputs.employee in this.employees) {
+      this.employees[inputs.employee].time_cards[inputs.date] = time_card;
+    } else {
+      console.log('Read time_card_create for non-existent employee.');
+    }
+  }
+
+  private processModifyTimeCard(result) {
+    const inputs = result.payload.inputs;
+
+    if (!(inputs.employee in this.employees)) {
+      // Needs to be created by a time_card_create
+      console.log('Read time_card_modify for non-existent employee.');
+      return;
+    }
+
+    if (!(inputs.date in this.employees[inputs.employee])) {
+      // Needs to be created by a time_card_create
+      console.log('Read time_card_modify for non-existent time card.');
+      return;
+    }
+
+    // Could put a timestamp check here, but I assume we process from oldest to newest
+    this.employees[inputs.employee].time_cards[inputs.date].minutes_worked = inputs.minutes_worked;
   }
 
   // ###########################################
@@ -145,22 +186,18 @@ export class HrApiService {
     return this.employees;
   };
 
-  public getAllTimeCards() {
-    return this.time_cards;
-  }
-
-  public getTimeCardForEmployee(pubKey: string) {
-    if (!(pubKey in this.time_cards)) {
+  public getTimeCardsForEmployee(pubKey: string) {
+    if (!(pubKey in this.employees)) {
       return null;
     }
-    return this.time_cards[pubKey];
+    return this.employees[pubKey].time_cards;
   }
 
-  public getTimeCardForEmployeeOnDate(pubKey: string, date: string) {
-    if (!(pubKey in this.time_cards) && !(date in this.time_cards[pubKey])) {
+  public getTimeCardsForEmployeeOnDate(pubKey: string, date: string) {
+    if (!(pubKey in this.employees) && !(date in this.employees[pubKey])) {
       return null;
     }
-    return this.time_cards;
+    return this.employees[pubKey].time_cards[date];
   }
 
 }
