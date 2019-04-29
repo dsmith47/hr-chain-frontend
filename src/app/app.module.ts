@@ -17,10 +17,10 @@ import { SupvInterfaceComponent } from './components/supv-interface/supv-interfa
 import { SubmitTimecardComponent } from './components/submit-timecard/submit-timecard.component';
 
 const routes: Routes = [
-  {path:'', component: AuthComponent},
-  {path:'employee-interface', component: EmployeeInterfaceComponent},
-  {path:'time-card-view', component: TimeCardViewComponent},
-  {path:'supervisor', component: SupvInterfaceComponent},
+  {path: '', component: AuthComponent},
+  {path: 'employee-interface', component: EmployeeInterfaceComponent},
+  {path: 'time-card-view', component: TimeCardViewComponent},
+  {path: 'supervisor', component: SupvInterfaceComponent},
 ];
 
 @NgModule({

@@ -18,16 +18,16 @@ export class SupvInterfaceComponent implements OnInit {
   }
 
   approveTimecard() {
-    console.log("Approving...");
+    console.log('Approving...');
     this.api.postApproveTimecard(this.date, this.employee, this.pubKey).subscribe((data) => {
-      console.log("Approved");
+      console.log('Approved');
     });
   }
 
   rejectTimecard() {
-    console.log("Rejecting...");
+    console.log('Rejecting...');
     this.api.postRejectTimecard(this.date, this.employee, this.pubKey).subscribe((data) => {
-      console.log("Rejected");
+      console.log('Rejected');
     });
   }
 }

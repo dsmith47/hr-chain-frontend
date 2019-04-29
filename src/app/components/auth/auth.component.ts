@@ -11,24 +11,24 @@ import { Globals } from '../../global';
 })
 export class AuthComponent implements OnInit {
 
-  pubKey:string = "";
-  privKey:string = "";
+  pubKey = '';
+  privKey = '';
 
-  error:string = "";
+  error = '';
 
-  constructor(private api:HrApiService) { }
+  constructor(private api: HrApiService) { }
 
   ngOnInit() {
   }
 
   submitAuth() {
-    console.log("Attempting login...");
+    console.log('Attempting login...');
     if (this.pubKey.length < 1 || this.privKey.length < 1) {
-      this.error = "Must specify a public key and a private key";
+      this.error = 'Must specify a public key and a private key';
       return;
     }
     this.api.getEmployee(this.pubKey).subscribe((data) => {
-      let d = JSON.parse(data._body).results[0].payload.inputs;
+      const d = JSON.parse(data._body).results[0].payload.inputs;
       console.log(d);
       Globals.pubKey = d.public_key;
       console.log(Globals.pubKey);

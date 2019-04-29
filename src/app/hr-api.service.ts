@@ -12,10 +12,10 @@ export class HrApiService {
   getEmployeesEndpoint = '/employee_create/';
   createTimecardEndpoint = '/time_card_create/';
   modifyProjectTimeEndpoint = '/time_card_modify_time/';
-  approveTimecardEndpoint = "/time_card_approve/";
-  rejectTimecardEndpoint = "/time_card_reject/";
+  approveTimecardEndpoint = '/time_card_approve/';
+  rejectTimecardEndpoint = '/time_card_reject/';
   transactionsEndpoint = '/transaction/';
-  submitTimecardEndpoint = '/time_card_submit_for_approval/'
+  submitTimecardEndpoint = '/time_card_submit_for_approval/';
 
   // Later on we could make state variables observable if we want to update components in real time
   // https://blog.angular-university.io/how-to-build-angular2-apps-using-rxjs-observable-data-services-pitfalls-to-avoid/
@@ -90,27 +90,27 @@ export class HrApiService {
 
   public createTimecard(fromStr: string, dateStr: string, employeeStr: string): Observable<any> {
     const body = {
-      "assetId": "0",
-      "from": fromStr,
-      "date": dateStr,
-      "employee": employeeStr,
+      'assetId': '0',
+      'from': fromStr,
+      'date': dateStr,
+      'employee': employeeStr,
     };
 
     const options = new RequestOptions({
       headers: new Headers({
         'APIKEY': this.apiKey,
       }),
-    }); 
+    });
 
     return this.http.post(this.baseUrl + this.createTimecardEndpoint, body, options);
   }
 
   public submitTimecard(fromStr: string, dateStr: string, employeeStr: string): Observable<any> {
     const body = {
-      "assetId": "0",
-      "from": fromStr,
-      "date": dateStr,
-      "employee": employeeStr,
+      'assetId': '0',
+      'from': fromStr,
+      'date': dateStr,
+      'employee': employeeStr,
     };
 
     const options = new RequestOptions({
@@ -122,36 +122,36 @@ export class HrApiService {
     return this.http.post(this.baseUrl + this.submitTimecardEndpoint, body, options);
   }
 
-  public postApproveTimecard(date:string, employee: string, from: string) {
+  public postApproveTimecard(date: string, employee: string, from: string) {
     const options = new RequestOptions({
       headers: new Headers({
         'APIKEY': this.apiKey,
       })
     });
-    let body = {
-      "from": from,
-      "date": date,
-      "employee": employee,
-      "assetId": "0",
+    const body = {
+      'from': from,
+      'date': date,
+      'employee': employee,
+      'assetId': '0',
     };
 
-    return this.http.post(this.baseUrl + this.approveTimecardEndpoint, body, options)
+    return this.http.post(this.baseUrl + this.approveTimecardEndpoint, body, options);
   }
 
-  public postRejectTimecard(date:string, employee: string, from: string) {
+  public postRejectTimecard(date: string, employee: string, from: string) {
     const options = new RequestOptions({
       headers: new Headers({
         'APIKEY': this.apiKey,
       })
     });
-    let body = {
-      "from": from,
-      "date": date,
-      "employee": employee,
-      "assetId": "0",
+    const body = {
+      'from': from,
+      'date': date,
+      'employee': employee,
+      'assetId': '0',
     };
 
-    return this.http.post(this.baseUrl + this.rejectTimecardEndpoint, body, options)
+    return this.http.post(this.baseUrl + this.rejectTimecardEndpoint, body, options);
   }
   // ###########################################
   // Methods to update data from the block chain
@@ -257,7 +257,7 @@ export class HrApiService {
 
     const employee = new Employee();
     employee.creation_timestamp = result.timestamp;
-    employee.pubKey = inputs.public_key
+    employee.pubKey = inputs.public_key;
     employee.name = inputs.name;
     employee.supervisorPubKey = inputs.supervisor;
     employee.time_cards = {};
