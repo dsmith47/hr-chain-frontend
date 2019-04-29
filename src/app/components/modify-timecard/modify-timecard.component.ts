@@ -16,7 +16,7 @@ export class ModifyTimecardComponent implements OnInit {
   empKey = '';
   supKey = '';
 
-  assetId = '';
+  assetId = '0';
   pubKey = '';
   date = '';
   minutes_worked = '';
@@ -29,7 +29,7 @@ export class ModifyTimecardComponent implements OnInit {
     this.getEmployeeInformation();
     console.log(this.api);
   }
-  
+
   getEmployeeInformation() {
     this.api.getEmployee('0xcc3f10Dc50eDBc58Ec01Ea8783E1945EF5b6Dc55')
     .subscribe(((data) => {
@@ -43,7 +43,7 @@ export class ModifyTimecardComponent implements OnInit {
   }
 
   modifyTimecard() {
-    this.api.modifyProjectTime(this.assetId, this.pubKey, this.date, this.minutes_worked).subscribe((data) => {
+    this.api.modifyProjectTime('0', this.pubKey, this.date, this.minutes_worked).subscribe((data) => {
       console.log(data);
     });
   }

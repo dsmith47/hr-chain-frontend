@@ -15,6 +15,7 @@ export class HrApiService {
   approveTimecardEndpoint = "/time_card_approve/";
   rejectTimecardEndpoint = "/time_card_reject/";
   transactionsEndpoint = '/transaction/';
+  submitTimecardEndpoint = '/time_card_submit_for_approval/'
 
   // Later on we could make state variables observable if we want to update components in real time
   // https://blog.angular-university.io/how-to-build-angular2-apps-using-rxjs-observable-data-services-pitfalls-to-avoid/
@@ -104,7 +105,24 @@ export class HrApiService {
     return this.http.post(this.baseUrl + this.createTimecardEndpoint, body, options);
   }
 
-  public postApproveTimecard(assetId: string, date:string, employee: string, from: string) {
+  public submitTimecard(fromStr: string, dateStr: string, employeeStr: string): Observable<any> {
+    const body = {
+      "assetId": "0",
+      "from": fromStr,
+      "date": dateStr,
+      "employee": employeeStr,
+    };
+
+    const options = new RequestOptions({
+      headers: new Headers({
+        'APIKEY': this.apiKey,
+      }),
+    });
+
+    return this.http.post(this.baseUrl + this.submitTimecardEndpoint, body, options);
+  }
+
+  public postApproveTimecard(date:string, employee: string, from: string) {
     const options = new RequestOptions({
       headers: new Headers({
         'APIKEY': this.apiKey,
@@ -114,13 +132,13 @@ export class HrApiService {
       "from": from,
       "date": date,
       "employee": employee,
-      "assetId": assetId,
+      "assetId": "0",
     };
 
     return this.http.post(this.baseUrl + this.approveTimecardEndpoint, body, options)
   }
 
-  public postRejectTimecard(assetId: string, date:string, employee: string, from: string) {
+  public postRejectTimecard(date:string, employee: string, from: string) {
     const options = new RequestOptions({
       headers: new Headers({
         'APIKEY': this.apiKey,
@@ -130,7 +148,7 @@ export class HrApiService {
       "from": from,
       "date": date,
       "employee": employee,
-      "assetId": assetId,
+      "assetId": "0",
     };
 
     return this.http.post(this.baseUrl + this.rejectTimecardEndpoint, body, options)

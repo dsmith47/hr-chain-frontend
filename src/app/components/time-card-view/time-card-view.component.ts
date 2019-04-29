@@ -38,7 +38,6 @@ export class TimeCardViewComponent implements OnInit {
       time_cards.push(row);
     }
 
-    console.log(time_cards);
     return time_cards;
   }
 

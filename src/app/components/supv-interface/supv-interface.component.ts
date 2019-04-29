@@ -8,7 +8,6 @@ import { HrApiService } from '../../hr-api.service';
 })
 export class SupvInterfaceComponent implements OnInit {
 
-  assetId = '';
   employee = '';
   pubKey = '';
   date = '';
@@ -20,14 +19,14 @@ export class SupvInterfaceComponent implements OnInit {
 
   approveTimecard() {
     console.log("Approving...");
-    this.api.postApproveTimecard(this.assetId, this.date, this.employee, this.pubKey).subscribe((data) => {
+    this.api.postApproveTimecard(this.date, this.employee, this.pubKey).subscribe((data) => {
       console.log("Approved");
     });
   }
 
   rejectTimecard() {
     console.log("Rejecting...");
-    this.api.postRejectTimecard(this.assetId, this.date, this.employee, this.pubKey).subscribe((data) => {
+    this.api.postRejectTimecard(this.date, this.employee, this.pubKey).subscribe((data) => {
       console.log("Rejected");
     });
   }

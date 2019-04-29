@@ -5,11 +5,11 @@ import { HrApiService } from '../../hr-api.service';
 import { Globals } from '../../global';
 
 @Component({
-  selector: 'app-create-timecard',
-  templateUrl: './create-timecard.component.html',
-  styleUrls: ['./create-timecard.component.css']
+  selector: 'app-submit-timecard',
+  templateUrl: './submit-timecard.component.html',
+  styleUrls: ['./submit-timecard.component.css']
 })
-export class CreateTimecardComponent implements OnInit {
+export class SubmitTimecardComponent implements OnInit {
 
   empName = '';
   empId = '';
@@ -40,9 +40,9 @@ export class CreateTimecardComponent implements OnInit {
     }));
   }
 
-  createTimecard() {
-    this.api.createTimecard(this.pubKey, this.date, this.pubKey).subscribe((data) => {
-        console.log(data);
+  submitTimecard() {
+    this.api.submitTimecard(this.pubKey, this.date, this.pubKey).subscribe((data) => {
+      console.log(data);
     });
   }
 }
