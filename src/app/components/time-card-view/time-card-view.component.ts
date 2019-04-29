@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { HrApiService } from '../hr-api.service';
+import { HrApiService } from '../../hr-api.service';
 
 @Component({
   selector: 'app-time-card-view',
@@ -17,50 +17,41 @@ export class TimeCardViewComponent implements OnInit {
   assetId = '';
   pubKey = '';
   date = '';
-  project = '';
   minutes_worked = '';
 
   lastRequestStatus = '';
-
-  employeeTimeCards = [];
 
   constructor(private api: HrApiService) { }
 
   ngOnInit() {
     this.getEmployeeInformation();
-    this.getEmployeeTimeCards();
   }
 
-  getAllTickets() {
-    this.api.modifyProjectTime(this.assetId, this.pubKey, this.date, this.minutes_worked)
-      .subscribe((data) => {
-        console.log(data);
-        this.lastRequestStatus = 'submission Logged!';
-        this.getEmployeeInformation();
-      });
+  getTimeCards() {
+    const time_cards = [];
+
+    const time_cards_dict = this.api.getTimeCardsForEmployee(this.empKey);
+
+    for (const date in time_cards_dict) {
+      const time_card = time_cards_dict[date];
+      const row = [time_card.date, time_card.minutes_worked, time_card.status];
+      time_cards.push(row);
+    }
+
+    console.log(time_cards);
+    return time_cards;
   }
 
   getEmployeeInformation() {
     this.api.getEmployee('0xcc3f10Dc50eDBc58Ec01Ea8783E1945EF5b6Dc55')
-    .subscribe(((data) => {
+    .subscribe((data) => {
       const d = JSON.parse(data._body).results[0].payload.inputs;
 
      this.empName = d['name'];
      this.empId = d['assetId'];
      this.empKey = d['public_key'];
      this.supKey = d['supervisor'];
-    }));
-  }
-
-  getEmployeeTimeCards() {
-    this.api.getEmployeeTimeCards('0xcc3f10Dc50eDBc58Ec01Ea8783E1945EF5b6Dc55')
-      .subscribe((data) => {
-        console.log(data);
-
-        const d = JSON.parse(data._body);
-        console.log(d);
-
-        this.employeeTimeCards = d.results;
-      });
+    });
   }
 }
+
