@@ -12,7 +12,9 @@ export class HrApiService {
   getEmployeesEndpoint = '/employee_create/';
   createTimecardEndpoint = '/time_card_create/';
   modifyProjectTimeEndpoint = '/time_card_modify_time/';
-  transactionsEndpoint = '/transaction';
+  approveTimecardEndpoint = "/time_card_approve/";
+  rejectTimecardEndpoint = "/time_card_reject/";
+  transactionsEndpoint = '/transaction/';
 
   // Later on we could make state variables observable if we want to update components in real time
   // https://blog.angular-university.io/how-to-build-angular2-apps-using-rxjs-observable-data-services-pitfalls-to-avoid/
@@ -81,6 +83,37 @@ export class HrApiService {
       options);
   }
 
+  public postApproveTimecard(assetId: string, date:string, employee: string, from: string) {
+    const options = new RequestOptions({
+      headers: new Headers({
+        'APIKEY': this.apiKey,
+      })
+    });
+    let body = {
+      "from": from,
+      "date": date,
+      "employee": employee,
+      "assetId": assetId,
+    };
+
+    return this.http.post(this.baseUrl + this.approveTimecardEndpoint, body, options)
+  }
+
+  public postRejectTimecard(assetId: string, date:string, employee: string, from: string) {
+    const options = new RequestOptions({
+      headers: new Headers({
+        'APIKEY': this.apiKey,
+      })
+    });
+    let body = {
+      "from": from,
+      "date": date,
+      "employee": employee,
+      "assetId": assetId,
+    };
+
+    return this.http.post(this.baseUrl + this.rejectTimecardEndpoint, body, options)
+  }
   // ###########################################
   // Methods to update data from the block chain
   // ###########################################
