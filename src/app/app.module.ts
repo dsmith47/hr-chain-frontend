@@ -11,8 +11,9 @@ import { AppComponent } from './app.component';
 import { EmployeeInterfaceComponent } from './components/employee-interface/employee-interface.component';
 import { AuthComponent } from './components/auth/auth.component';
 import { TimeCardViewComponent } from './components/time-card-view/time-card-view.component';
+import { ModifyTimecardComponent } from './components/modify-timecard/modify-timecard.component';
+import { CreateTimecardComponent } from './components/create-timecard/create-timecard.component';
 import { SupvInterfaceComponent } from './components/supv-interface/supv-interface.component';
-
 
 const routes: Routes = [
   {path:'', component: AuthComponent},
@@ -27,7 +28,9 @@ const routes: Routes = [
     EmployeeInterfaceComponent,
     AuthComponent,
     TimeCardViewComponent,
-    SupvInterfaceComponent
+    ModifyTimecardComponent,
+    CreateTimecardComponent,
+    SupvInterfaceComponent,
   ],
   imports: [
     BrowserModule,

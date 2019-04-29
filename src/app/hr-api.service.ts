@@ -37,7 +37,7 @@ export class HrApiService {
     const options = new RequestOptions({
       headers: new Headers({
         'APIKEY': this.apiKey
-      })
+      }),
     });
     return this.http.get(this.baseUrl + this.getEmployeesEndpoint, options);
   }
@@ -81,6 +81,27 @@ export class HrApiService {
 
     return this.http.get(this.baseUrl + this.modifyProjectTimeEndpoint,
       options);
+  }
+
+  // ##########################################
+  // Methods to create object on the blockchain
+  // ##########################################
+
+  public createTimecard(fromStr: string, dateStr: string, employeeStr: string): Observable<any> {
+    const body = {
+      "assetId": "0",
+      "from": fromStr,
+      "date": dateStr,
+      "employee": employeeStr,
+    };
+
+    const options = new RequestOptions({
+      headers: new Headers({
+        'APIKEY': this.apiKey,
+      }),
+    }); 
+
+    return this.http.post(this.baseUrl + this.createTimecardEndpoint, body, options);
   }
 
   public postApproveTimecard(assetId: string, date:string, employee: string, from: string) {
