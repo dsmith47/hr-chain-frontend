@@ -22,7 +22,6 @@ export class HrApiService {
 
   // {pubKey:Employee}
   public employees = {};
-  private _lastReadResultId = null; // TODO: Planning to use local storage so this is useful
 
   constructor(private http: Http) {
     this.updateData();
@@ -193,30 +192,10 @@ export class HrApiService {
     });
     console.log(results);
 
-    // So that we don't need to re-process the whole blockchain each time
-    // TODO: Planning to use local storage so that this is useful
-    let reached_last_read_transaction = false;
-    if (this._lastReadResultId === null) {
-      reached_last_read_transaction = true;
-    }
-
     // Note that this processes transactions from oldest to newest
     for ( let i = d['count'] - 1; i >= 0; i--) {
       const result = results[i];
       const method = result.payload.method;
-
-      // TODO: Planning to use local storage so this is useful
-      // Check if we have already processed this data
-      if (reached_last_read_transaction) {
-        this._lastReadResultId = result.id;
-      } else {
-        if (result.id === this._lastReadResultId) {
-          reached_last_read_transaction = true;
-        }
-        console.log('Already read this transaction, skipping.');
-        continue;
-      }
-      this._lastReadResultId = result.id;
 
       switch (method) {
         case 'employee_create':
