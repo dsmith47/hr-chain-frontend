@@ -114,7 +114,11 @@ export class HrApiService {
     this.employees = {};
 
     const d = JSON.parse(data['_body']);
-    const results = d.results;
+    const results = d.results.sort(function(a, b){
+      const date1 = Date.parse(a.timestamp);
+      const date2 = Date.parse(b.timestamp);
+      return date1 < date2;
+    });
     console.log(results);
 
     // So that we don't need to re-process the whole blockchain each time
