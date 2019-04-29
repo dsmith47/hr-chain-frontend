@@ -54,11 +54,5 @@ export class EmployeeInterfaceComponent implements OnInit {
      this.supKey = d['supervisor'];
     }));
   }
-
-  createTimecard() {
-    this.api.createTimecard(Globals.pubKey, '01/01/2019', Globals.pubKey).subscribe((data) => {
-      console.log(data);
-    });
-  }
 }
 
