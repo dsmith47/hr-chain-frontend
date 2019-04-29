@@ -7,6 +7,7 @@ import { HrApiService } from '../../hr-api.service';
   templateUrl: './employee-interface.component.html',
   styleUrls: ['./employee-interface.component.css']
 })
+
 export class EmployeeInterfaceComponent implements OnInit {
 
   empName = '';
@@ -25,6 +26,7 @@ export class EmployeeInterfaceComponent implements OnInit {
 
   ngOnInit() {
     this.getEmployeeInformation();
+    console.log(this.api);
   }
 
   getAllTickets() {
@@ -48,3 +50,4 @@ export class EmployeeInterfaceComponent implements OnInit {
     }));
   }
 }
+
