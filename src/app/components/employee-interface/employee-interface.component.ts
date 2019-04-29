@@ -12,6 +12,7 @@ import { CreateTimecardComponent } from '../create-timecard/create-timecard.comp
   templateUrl: './employee-interface.component.html',
   styleUrls: ['./employee-interface.component.css']
 })
+
 export class EmployeeInterfaceComponent implements OnInit {
 
   empName = '';
@@ -60,3 +61,4 @@ export class EmployeeInterfaceComponent implements OnInit {
     });
   }
 }
+

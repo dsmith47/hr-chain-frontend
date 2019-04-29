@@ -5,114 +5,16 @@
     <caption>Employee Timecard</caption>
     <thead>
     <tr>
-      <th id="thDay">Day</th>
-      <th id="thRegular">Regular</th>
-      <th id="thOvertime">Overtime</th>
-      <th id="thTotal">Total</th>
+      <th id="thDate">Date</th>
+      <th id="thMinutes">Minutes Worked</th>
+      <th id="th">Status</th>
     </tr>
     </thead>
-    <tbody>
-    <tr class="odd">
-      <th>Monday</th>
-      <td>8</td>
-      <td>0</td>
-      <td>8</td>
+    <tbody></tbody>
+    <tr *ngFor="let row of getTimeCards()">
+      <th> {{ row[0] }} </th>
+      <td> {{ row[1] }} </td>
+      <td> {{ row[2] }} </td>
     </tr>
-    <tr class="even">
-      <th>Tuesday</th>
-      <td>8</td>
-      <td>2.5</td>
-      <td>10.5</td>
-    </tr>
-    <tr class="odd">
-      <th>Wednesday</th>
-      <td>8</td>
-      <td>0</td>
-      <td>8</td>
-    </tr>
-    <tr class="even">
-      <th>Thursday</th>
-      <td>8</td>
-      <td>0</td>
-      <td>8</td>
-    </tr>
-    <tr class="odd">
-      <th>Friday</th>
-      <td>8</td>
-      <td>0</td>
-      <td>8</td>
-    </tr>
-    <tr class="even">
-      <th>Saturday</th>
-      <td>0</td>
-      <td>5</td>
-      <td>5</td>
-    </tr>
-    <tr class="odd">
-      <th>Sunday</th>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-    </tr>
-    </tbody>
-    <tfoot>
-    <tr>
-      <th>Total weekly hours:</th>
-      <td>40</td>
-      <td>8.5</td>
-      <td>48.5</td>
-    </tr>
-    </tfoot>
   </table>
 </div>
-
-<!--
-<h3> Employee Details: </h3>
-<div>
-  <span>Name: {{empName}}</span> 
-</div>
-<div>
-  <span>Asset: {{empId}}</span> 
-</div>
-<div>
-  <span>Public Key: {{empKey}}</span> 
-</div>
-<div>
-  <span>Supervisor: {{supKey}}</span> 
-</div>
-
-<h3> Time Card Submission: </h3>
-
-<div>
-  <span>Asset Id:</span>
-  <input type="" class="" id="" [(ngModel)]="assetId" name="assetId">
-</div>
-
-<div>
-  <span>Public Key:</span>
-  <input type="" class="" id="" [(ngModel)]="pubKey" name="assetId">
-</div>
-
-<div>
-  <span>Date:</span>
-  <input type="" class="" id="" [(ngModel)]="date" name="assetId">
-</div>
-
-<div>
-  <span>Project:</span>
-  <input type="" class="" id="" [(ngModel)]="project" name="assetId">
-</div>
-
-<div>
-  <span>Minutes Worked:</span>
-  <input type="" class="" id="" [(ngModel)]="minutes_worked" name="assetId">
-</div>
-
-<div>
-  {{lastRequestStatus}}
-</div>
-
-<button (click)="getAllTickets()">
-  Submit Project Update
-</button>
--->

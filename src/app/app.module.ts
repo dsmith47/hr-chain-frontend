@@ -13,11 +13,13 @@ import { AuthComponent } from './components/auth/auth.component';
 import { TimeCardViewComponent } from './components/time-card-view/time-card-view.component';
 import { ModifyTimecardComponent } from './components/modify-timecard/modify-timecard.component';
 import { CreateTimecardComponent } from './components/create-timecard/create-timecard.component';
+import { SupvInterfaceComponent } from './components/supv-interface/supv-interface.component';
 
 const routes: Routes = [
   {path:'', component: AuthComponent},
   {path:'employee-interface', component: EmployeeInterfaceComponent},
   {path:'time-card-view', component: TimeCardViewComponent},
+  {path:'supervisor', component: SupvInterfaceComponent},
 ];
 
 @NgModule({
@@ -27,7 +29,8 @@ const routes: Routes = [
     AuthComponent,
     TimeCardViewComponent,
     ModifyTimecardComponent,
-    CreateTimecardComponent
+    CreateTimecardComponent,
+    SupvInterfaceComponent,
   ],
   imports: [
     BrowserModule,
