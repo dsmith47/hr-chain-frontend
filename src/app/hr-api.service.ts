@@ -6,8 +6,8 @@ import { Employee } from './models/employee.model';
 
 @Injectable()
 export class HrApiService {
-  baseUrl = 'https://api.simbachain.com/v1/HR_Chain_V3';
-  apiKey = 'e50c20bc126c1226d98a6026044109417b11351f7efba17d109d6015870917a3';
+  baseUrl = 'https://api.simbachain.com/v1/HR_Chain_V4';
+  apiKey = '497e05cc72e9b0121cce9363f06721ebd79ffbe9872292208bcb8e240bb48d92';
 
   getEmployeesEndpoint = '/employee_create/';
   createTimecardEndpoint = '/time_card_create/';
@@ -86,6 +86,25 @@ export class HrApiService {
   // ##########################################
   // Methods to create object on the blockchain
   // ##########################################
+
+  public createEmployee(fromStr: string, name: string, pubKey: string, supervisorPubKey: string, dollarsPerHour: string ): Observable<any> {
+    const body = {
+      'assetId': '0',
+      'from': fromStr,
+      'name': name,
+      'public_key': pubKey,
+      'supervisor': supervisorPubKey,
+      'dollars_per_hour': dollarsPerHour
+    };
+
+    const options = new RequestOptions({
+      headers: new Headers({
+        'APIKEY': this.apiKey,
+      }),
+    });
+
+    return this.http.post(this.baseUrl + this.getEmployeesEndpoint, body, options);
+  }
 
   public createTimecard(fromStr: string, dateStr: string, employeeStr: string): Observable<any> {
     const body = {

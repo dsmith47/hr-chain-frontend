@@ -16,7 +16,6 @@ export class ModifyTimecardComponent implements OnInit {
   empKey = '';
   supKey = '';
 
-  assetId = '0';
   pubKey = '';
   date = '';
   minutes_worked = '';
