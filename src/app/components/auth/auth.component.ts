@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { HrApiService } from '../../hr-api.service';
+import { MetamaskService } from '../../metamask.service';
 import { Globals } from '../../global';
 
 @Component({
@@ -16,13 +17,16 @@ export class AuthComponent implements OnInit {
 
   error = '';
 
-  constructor(private api: HrApiService) { }
+  constructor(private api: HrApiService,
+              private metamask: MetamaskService) { }
 
   ngOnInit() {
+    this.metamask.sign();
   }
 
   submitAuth() {
     console.log('Attempting login...');
+    /*
     if (this.pubKey.length < 1 || this.privKey.length < 1) {
       this.error = 'Must specify a public key and a private key';
       return;
@@ -33,5 +37,6 @@ export class AuthComponent implements OnInit {
       Globals.pubKey = d.public_key;
       console.log(Globals.pubKey);
     });
+    */
   }
 }

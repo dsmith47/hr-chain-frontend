@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
 
 import { HrApiService } from './hr-api.service';
+import { MetamaskService } from './metamask.service';
 import { Globals } from './global';
 
 import { AppComponent } from './app.component';
@@ -44,6 +45,7 @@ const routes: Routes = [
   ],
   providers: [
     HrApiService,
+    MetamaskService,
     Globals
   ],
   bootstrap: [AppComponent]
