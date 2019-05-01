@@ -2,6 +2,13 @@
 
 This project was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.28.3.
 
+## Authentication Plugin
+
+To use this service in you need a browser equipped with
+[metamask](https://metamask.io/) and disable privacy mode, which
+allows the webapp to use the metamask injected environment.
+
+
 ## Development server
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
