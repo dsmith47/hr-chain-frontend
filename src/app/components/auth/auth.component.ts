@@ -17,11 +17,13 @@ export class AuthComponent implements OnInit {
 
   error = '';
 
+  auth_available = false;
+
   constructor(private api: HrApiService,
               private metamask: MetamaskService) { }
 
   ngOnInit() {
-    this.metamask.sign();
+    this.auth_available = this.metamask.checkAuth();
   }
 
   submitAuth() {
