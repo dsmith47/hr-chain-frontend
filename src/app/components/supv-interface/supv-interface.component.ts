@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HrApiService } from '../../hr-api.service';
+import { MetamaskService } from '../../metamask.service';
 
 @Component({
   selector: 'app-supv-interface',
@@ -12,7 +13,8 @@ export class SupvInterfaceComponent implements OnInit {
   pubKey = '';
   date = '';
 
-  constructor(private api: HrApiService) { }
+  constructor(private api: HrApiService,
+              private metamask: MetamaskService) { }
 
   ngOnInit() {
   }
@@ -21,6 +23,8 @@ export class SupvInterfaceComponent implements OnInit {
     console.log('Approving...');
     this.api.postApproveTimecard(this.date, this.employee, this.pubKey).subscribe((data) => {
       console.log('Approved');
+      console.log(data);
+      this.metamask.sign(data['_body']);
     });
   }
 
@@ -28,6 +32,7 @@ export class SupvInterfaceComponent implements OnInit {
     console.log('Rejecting...');
     this.api.postRejectTimecard(this.date, this.employee, this.pubKey).subscribe((data) => {
       console.log('Rejected');
+      this.metamask.sign(data['_body']);
     });
   }
 }
