@@ -33,10 +33,10 @@ export class HrApiService {
   }
 
   public submitSignedTxn(bodyStr: string, txn_id: string): Observable<any> {
-    let body = {
-      "body": bodyStr,
-      "txn_id": txn_id,
-    };	  
+    const body = {
+      'body': bodyStr,
+      'txn_id': txn_id,
+    };
     const options = new RequestOptions({
       headers: new Headers({
         'APIKEY': this.apiKey
@@ -44,7 +44,7 @@ export class HrApiService {
     });
     return this.http.post(this.baseUrl + this.transactionsEndpoint
                           + '/' + txn_id + '/',
-                          body, options); 
+                          body, options);
   }
 
   public getTicketIds(): Observable<any> {
